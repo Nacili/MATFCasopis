@@ -17,3 +17,4 @@ Razviti veb platformu koja će omogućiti sve neophodne funkcionalnosti za uređ
   * Biljana Stojanović
   * Anđelka Zečević
   * Mirjana Maljković
+  * Tijana Šukilović
