@@ -18,3 +18,6 @@ Razviti veb platformu koja će omogućiti sve neophodne funkcionalnosti za uređ
   * Anđelka Zečević
   * Mirjana Maljković
   * Tijana Šukilović
+
+## Za članove tima:
+Uputstvo vezano za organizaciju repozitorijuma i njegovo korišćenje možete naći u odeljku Wiki pod naslovom "Uputstvo"
