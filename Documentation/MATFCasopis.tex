@@ -79,7 +79,7 @@ Korisnik odabere šablon, otvori mu se radna površina za pisanje u koju se šab
 
 \subsection{Životni ciklus rada}
 \subsubsection{Prijavljivanje}
-Rad prijavljuje autor koji je ujedno i "odgovorno lice" za taj rad. Spisak autora koje rad sadrži kao atribut mogu biti reference na autore već poznate sistemu, inače o autoru će biti napravljen zapis u sistemu koji će biti moguće koristiti kao njegov kontakt u slučaju da je to potrebno (npr. poziv za učlanjenje).
+Rad prijavljuje autor koji je ujedno i odgovorno lice za taj rad. Spisak autora koje rad sadrži kao atribut mogu biti reference na autore već poznate sistemu, inače o autoru će biti napravljen zapis u sistemu koji će biti moguće koristiti kao njegov kontakt u slučaju da je to potrebno (npr. poziv za učlanjenje).
 \subsubsection{Dodeljivanje urednicima i recenzentima}
 Rad je inicijalno prikazan glavnom uredniku koji ga dodeljuje uredniku. On zatim "nudi" rad recenzentima koji imaju mogućnost da prihvate ili odbiju tu ulogu. Obaveštenja o dodelama radova i ponudama recenzentskih uloga su realizovana putem slanja šablona (opisanim u delu 6) i praćena su akcijama sistema.
 \subsubsection{Recenziranje}
@@ -89,7 +89,7 @@ Rad može biti komentarisan od strane glavnog urednika i urednika i to u slučaj
 \subsubsection{Ažuriranje}
 Nakon što je rad od strane urednika označen za doradu, autor ima mogućnost da izmenjenu verziju rada ponovo prijavi. U tom slučaju potrebna je ponoviti i dodelu recenzenata. Kao u slučaju prvobitne dodele, uredniku je ponuđen spisak recenzenata na kome bi favorizovani bili oni koji su na tom radu već imali recenzentsku ulogu.
 \subsubsection{Menjanje statusa}
-Status rada je inicijalno postavljen na "prijavljen" i može biti promenjen akcijama korisnika sistema. Moguća stanja i akcije koje dovode do tih stanja su navedene u delu 4.
+Status rada je inicijalno postavljen na "prijavljen" i može biti promenjen akcijama korisnika sistema. Moguća stanja i akcije koje dovode do tih stanja su navedene u delu 2.3.
 %\subsection{Prijavljivanje rada kao plagiran/uvredljiv sadržaj}
 %Ovo pravo imaju samo registrovani korisnici.
 
@@ -204,6 +204,53 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                     \item Korisnik ponovo pokušava da "reši"\ ReCaptcha.
                     \item Korisnik ponavlja korak c) ovog alternativnog toka 4 dok ne bude moguće preći na korak 2 glavnog toka.
                     \item Prelazi na korak 2 glavnog toka.
+                \end{enumerate}
+        \end{enumerate}
+\end{itemize}
+
+\subsection{Promena ličnih podataka}
+\begin{itemize}
+    \item Akter: Korisnik sistema (Administrator, Glavni urednik, Urednik, Recenzent, Autor)
+    \item Kratak opis: Korisnik želi da promeni neke od ličnih podataka
+    \item Osnovni tok događaja:
+        \begin{enumerate}
+            \item Korisniku se prikazuje forma slična onoj koja je korišćena za registraciju, bez pojedinih polja ReCaptcha na kojoj korisnik menja željene podatke.
+            \item Korisnik pokušava da promeni podatke.
+            \item Novi podaci korisnika su sačuvani.
+            \item Nakon uspešne promene podataka sistem obaveštava korisnika o uspešnoj akciji.
+        \end{enumerate}
+    \item Alternativni tok događaja:
+        \begin{enumerate}
+            \item Medju promenjenim podacima je i email adresa
+                \begin{enumerate}
+                    \item Nakon 2. koraka sistem ispisuje poruku uspešnosti promene svih korisničkih podataka osim email adrese. Ispisuje se obaveštenje da korisnik treba da potvrdi svoju novu email adresu tako što će posetiti link koji mu je na tu adresu poslat.
+                    \item Korisnik prelazi na korak 3 glavnog toka podataka.
+                \end{enumerate}
+            \item Neko od obaveznih polja nije popunjeno ili neko od polja ne odgovara formatu koji je za to polje zadat regularnim izrazom
+                \begin{enumerate}
+                    \item Nakon 2. koraka sistem ispisuje poruku o grešci i obaveštava korisnika da podaci nisu uspešno izmenjeni.
+                    \item Korisnik se vraća na korak 1 glavnog toka.
+                \end{enumerate}
+        \end{enumerate}
+\end{itemize}
+
+\subsection{Promena korisničkih podataka}
+\begin{itemize}
+    \item Akter: Administrator
+    \item Kratak opis: Korisnik želi da promeni neke od ličnih podataka drugih korinika
+    \item Osnovni tok događaja:
+        \begin{enumerate}
+            \item Administratoru se prikazuje panel u kojem se nalazi spisak korisnika kojima može menjati lične informacije.
+            \item Administrator bira željenog korisnika.
+            \item Administratoru se prikazuje formular na kome može menjati lične podatke korisnika (sve osim email-a).
+            \item Nakon uspešne promene podataka sistem obaveštava administratora o uspešnoj akciji.
+        \end{enumerate}
+    \item Alternativni tok događaja:
+        \begin{enumerate}
+            \item Neko od obaveznih polja nije popunjeno ili neko od polja ne odgovara formatu koji je za to polje zadat regularnim izrazom
+                \begin{enumerate}
+                    \item Nakon 2. koraka sistem ispisuje poruku o grešci i obaveštava administratora da podaci nisu uspešno izmenjeni.
+                    \item Administrator se vraća na korak 3 glavnog toka.
                 \end{enumerate}
         \end{enumerate}
 \end{itemize}
