@@ -22,5 +22,5 @@ Razviti veb platformu koja će omogućiti sve neophodne funkcionalnosti za uređ
 ## Za članove tima:
 Uputstvo vezano za organizaciju repozitorijuma i njegovo korišćenje možete naći u odeljku Wiki pod naslovom "Uputstvo". Tu možete neći i overleaf link za editovanje glavnog fajla dokumentacije.
 
-## Za pregledača posmatrače projekta
+## Za posmatrače projekta
 Overleaf link glavnog fajla dokumentacije https://www.overleaf.com/read/jfwxjyhdpjfq
