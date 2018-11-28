@@ -46,7 +46,7 @@ Atributi: ISSN, godina, naslov, g.urednik, urednici, minimalan i maksimalan broj
 \subsection{Rad}
     Atributi: broj, naslov, godina, imena autora, datum prve prijave, datum poslednje prijave, log prijava, rad u pdf formatu, recenzenti, urednik, status, broj verzija, objavljen
     
-    Statusi rada:
+    Statusi rada ovde dodati dijagram stanja:
     \begin{itemize}
         \item prijavljen: dobija status kada ga autor prijavi
         \item na recenziji: kada ga primi recenzent na recenziju
@@ -66,7 +66,7 @@ Prilikom registrovanja, korisnik ima mogućnost da označi opciju "nemam ništa 
     \item Prijavljivanje: korisnik popuni formular i time se uloguje
 \end{itemize}
     
-\subsection{Komunikacija među korisnicima}
+\subsection{Komunikacija među korisnicima ovde uraditi dijagram aktivnosti}
 Korisnik odabere šablon, otvori mu se radna površina za pisanje u koju se šablon učita. On taj šablon može sačuvati i ima opciju da ga pošalje, čime se šablon automatski šalje na mejl drugog saučesnika u komunikacji. Korisnik može i napraviti novi šablon i obrisati ga, ako nije predefinisan od strane sistema, kao što su dole navedeni šabloni.
 \begin{itemize}
 \item Administrator ostalim korisnicima: šabloni 1 (uspešno registrovanje) i 2 (uspešna/neuspešna promena ličnih podataka)
@@ -84,14 +84,12 @@ Rad prijavljuje autor koji je ujedno i odgovorno lice za taj rad. Spisak autora 
 Rad je inicijalno prikazan glavnom uredniku koji ga dodeljuje uredniku. On zatim "nudi" rad recenzentima koji imaju mogućnost da prihvate ili odbiju tu ulogu. Obaveštenja o dodelama radova i ponudama recenzentskih uloga su realizovana putem slanja šablona (opisanim u delu 6) i praćena su akcijama sistema.
 \subsubsection{Recenziranje}
 Recenzent može prihvatiti rad koji mu je ponuđen na recenziju od strane urednika nakon čega automatski biva dodeljen tom radu. Od njega se očekuje da popuni formular koje će sadržati delove koji su upućeni autoru/autorima i uredniku. Nakon popunjavanja objavljuje svoju recenziju koja će biti vidljiva uredniku, koji preuzima dalje akcije.
-\subsubsection{Komentarisanje rada od strane urednika}
+\subsubsection{Komentarisanje rada od strane urednika ovde uraditi dijagram aktivnosti / BPMN}
 Rad može biti komentarisan od strane glavnog urednika i urednika i to u slučajevima kada je rad odbijen sa komentarom, koji će autor moći da pročita kao objašnjenje za preduzetu akciju, ili kada se rad označava za doradu, čime se autoru stavlja do znanja koje su to promene koje se zahtevaju.
 \subsubsection{Ažuriranje}
 Nakon što je rad od strane urednika označen za doradu, autor ima mogućnost da izmenjenu verziju rada ponovo prijavi. U tom slučaju potrebna je ponoviti i dodelu recenzenata. Kao u slučaju prvobitne dodele, uredniku je ponuđen spisak recenzenata na kome bi favorizovani bili oni koji su na tom radu već imali recenzentsku ulogu.
 \subsubsection{Menjanje statusa}
 Status rada je inicijalno postavljen na "prijavljen" i može biti promenjen akcijama korisnika sistema. Moguća stanja i akcije koje dovode do tih stanja su navedene u delu 2.3.
-%\subsection{Prijavljivanje rada kao plagiran/uvredljiv sadržaj}
-%Ovo pravo imaju samo registrovani korisnici.
 
     
 \subsection{Sistemska podešavanja}
@@ -102,24 +100,43 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
 
 \section{Slučajevi upotrebe}
 
-\subsection{Promena podešavanja časopisa}
+\subsection{Promena podataka časopisa (pomeriti kao poslednji slučaj upotrebe)}
 \begin{itemize}
     \item Akter: Administrator sistema
-    \item Kratak opis: Administrator menja podešavanja časopisa
-    \item Osnovni tok događaja:(ponavljati korak 2 željeni broj puta)
+    \item Kratak opis: Administrator menja podatke časopisa
+    \item Preduslov: nema
+    \item Postuslov: nema
+    \item Osnovni tok događaja:
         \begin{enumerate}
             \item Administrator pristupa obrascu za menjanje podataka
             \item Administrator unosi podatke u formu
-            \item Adminstrator pokušava da sačuva nove podatke
-            \item Novi podaci su sačuvani na sistemu
+            \item Adminstrator šalje zahtev za čuvanjem novih podataka
+            \item Sistem je sačuvao nove podatke
+            \item Sistem obaveštava koriniska o sačuvanim izmenama
         \end{enumerate}
     \item Alternativni tok događaja:
         \begin{enumerate}
-            \item Sistem ne može da sačuva nove podatke
+            \item Koraka 4. osnovnog toka: Sistem ne može da sačuva nove podatke
                 \begin{enumerate}
-                    \item Administrator proverava da li su podaci validni u odnosu na već definisanu bazu podataka. Ponovo pokušava da sačuva podatke, ako ne uspe, prelazi na korak 1.b. alternativnog toka 
-                    \item Administrator proverava internet konekciju i uspešno je podešava. Ponovo pokušava da sačuva podatke, ako ne uspe, prelazi na korak 1.c alternativnog toka
-                    \item Administrator proverava da li je funkcionalnost slanja podataka preko forme dobro implementirana. Ako nije, popravlja to i pokušava ponovo da sačuva podatke. Ako ne uspe, prelazi na korak 1.d alternativnog toka
+                    \item Administrator popravlja unete podatke tako da budu u saglasnosti sa bazom podataka
+                    \begin{enumerate}
+                        \item Administrator šalje zahtev za čuvanjem podataka
+                        \item Ako je sistem sačuvao nove podatke, prelazi se na korak 5. osnovnog toka.
+                        \item Ako ne, prelazi se na korak 1.b) alternativnog toka.
+                    \end{enumerate}
+                    \item Administrator proverava internet konekciju i uspešno je podešava.
+                    \begin{enumerate}
+                        \item Ponovo šalje zahtev za čuvanjem podataka
+                        \item Ako je sistem sačuvao nove podatke, prelazi se na korak 5. osnovnog toka.
+                        \item Ako ne, prelazi se na korak 1.c) alternativnog toka.
+                    \end{enumerate}
+                    \item Administrator proverava da li je funkcionalnost slanja podataka preko forme dobro implementirana.
+                    \begin{enumerate}
+                        \item Administrator popravlja funkcionalnost i pokušava ponovo da sačuva podatke.
+                        \item Administrator šalje zahtev za čuvanjem podataka
+                        \item Ako je sistem sačuvao nove podatke, prelazi se na korak 5. osnovnog toka.
+                        \item Ako ne, prelazi se na korak 1.d) alternativnog toka.
+                    \end{enumerate}
                     \item Ozbiljna greška sistema. Administrator traži grešku i pokušava da je otkloni.
                 \end{enumerate}
         \end{enumerate}
@@ -128,48 +145,16 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
 \begin{figure}[hbt!]
     \centering
     \includegraphics[width=\linewidth]{USeCasePromenaPodatakaCasopisa.png}
-    \caption{UseCase Promena podataka časopisa}
-    \label{fig:my_label}
-\end{figure}
-
-\subsection{Prijavljivanje korisnika}
-\begin{itemize}
-    \item Akter: Korisnik sistema (Administrator, Glavni urednik, Urednik, Recenzent, Autor)
-    \item Kratak opis: Korisnik unosi potrebne podatke kako bi se ulogovao u sistem
-    \item Osnovni tok događaja:
-        \begin{enumerate}
-            \item Korisnik unosi svoju email adresu i sifru u polja koja su za to predoredjena
-            \item Pokusava da se prijavi na sistem
-            \item Nakon uspesnoj autentikaciji korisnika prikazuje mu početna stranica u zavisnosti od uloge:
-            \begin{enumerate}
-                \item Administrator - admin panel za upravljanje sistemom
-                \item Glavni urednik - lista novopristiglih radova
-                \item Urednik - lista radova koji su poslednji dodeljeni od strane glavnog urednika
-                \item Recenzent - lista radova koji su poslednji ponudjeni za recenziju od strane urednika
-                \item Autor - listu svojih radova
-            \end{enumerate}
-        \end{enumerate}
-    \item Alternativni tok događaja:
-        \begin{enumerate}
-            \item Autentikacija korisnika nije uspela
-                \begin{enumerate}
-                    \item Nakon 2. koraka sistem ispisuje poruku o neuspešnoj autentikaciji.
-                    \item Korisnik ponavlja korake 1. i 2.
-                \end{enumerate}
-        \end{enumerate}
-\end{itemize}
-
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=0.8\linewidth]{UpravljanjeNalozimaIKorisnicima.PNG}
-    \caption{UseCase Prijavljivanje korisnika}
+    \caption{Promena podataka časopisa}
     \label{fig:my_label}
 \end{figure}
 
 \subsection{Registracija korisnika}
 \begin{itemize}
-    \item Akter: Korisnik sistema (budući) (Glavni urednik, Urednik, Recenzent, Autor)
+    \item Akter: Korisnik
     \item Kratak opis: Korisnik unosi potrebne podatke kako bi se registrovao u sistemu
+    \item Preduslov: Korisnik nije već registrovan
+    \item Postuslov: ?
     \item Osnovni tok događaja:
         \begin{enumerate}
             \item Korisnik unosi podatke u formular koji mu se prikazuje nakon zahteva za registracijom (dok ne uradimo screenshot forme, ovo je placeholder formular sadrzi polja: First Name, Last Name, Title, Email, Confirm email, Password, Repeat Password, URL, Phone, Country, (check option) Available for reviewing role, Google ReCaptcha)
@@ -183,53 +168,102 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                 \begin{enumerate}
                     \item Nakon 2. koraka sistem ispisuje poruku o grešci i zahteva od korisnika da unese podatke koji fale u obaveznim poljima i ta polja bivaju označena.
                     \item Korisnik popunjava tražena polja.
-                    \item Korisnik zatim ponavlja korak 2 iz glavnog toka.
+                    \item Korisnik zatim ponavlja korak 2 iz osnovnog toka.
                 \end{enumerate}
             \item Vrednosti u poljiva Confirm email i Repeat Password ne odgovaraju vrednostima u poljima Email i Password
                 \begin{enumerate}
                     \item Nakon 2. koraka sistem ispisuje poruku o grešci i obaveštava korisnika o nepoklapanju podataka u datim poljima.
                     \item Korisnik ponovo popunjava sporna polja.
-                    \item Korisnik zatim ponavlja korak 2 iz glavnog toka.
+                    \item Korisnik zatim ponavlja korak 2 iz osnovnog toka.
                 \end{enumerate}
             \item Neko od polja ne odgovara formatu koji je za to polje zadat regularnim izrazom
                 \begin{enumerate}
                     \item Nakon 2. koraka sistem ispisuje poruku o grešci i zahteva od korisnika da unese podatke u odgovarajućem formatu za polja koja označava na neki način.
                     \item Korisnik ponovo popunjava tražena polja.
-                    \item Korisnik zatim ponavlja korak 2 iz glavnog toka.
+                    \item Korisnik zatim ponavlja korak 2 iz osnovnog toka.
                 \end{enumerate}
             \item ReCaptcha ne prepoznaje korisnika kao živu osobu
                 \begin{enumerate}
                     \item Nakon 1. koraka sistem ne dozvoljava korisniku da nastavi sa registracijom.
                     \item ReCaptcha se reinicijalizuje.
                     \item Korisnik ponovo pokušava da "reši"\ ReCaptcha.
-                    \item Korisnik ponavlja korak c) ovog alternativnog toka 4 dok ne bude moguće preći na korak 2 glavnog toka.
-                    \item Prelazi na korak 2 glavnog toka.
+                    \item Korisnik ponavlja korak c) ovog alternativnog toka 4 dok ne bude moguće preći na korak 2 osnovnog toka.
+                    \item Prelazi na korak 2 osnovnog toka.
                 \end{enumerate}
         \end{enumerate}
 \end{itemize}
 
-\subsection{Promena ličnih podataka}
+\subsection{Prijavljivanje korisnika}
 \begin{itemize}
-    \item Akter: Korisnik sistema (Administrator, Glavni urednik, Urednik, Recenzent, Autor)
-    \item Kratak opis: Korisnik želi da promeni neke od ličnih podataka
+    \item Akter: Korisnik
+    \item Kratak opis: Korisnik unosi potrebne podatke kako bi se ulogovao u sistem
+    \item Preduslovi: Korisnik postoji u sistemu
+    \item Postuslovi: Nema
     \item Osnovni tok događaja:
         \begin{enumerate}
-            \item Korisniku se prikazuje forma slična onoj koja je korišćena za registraciju, bez pojedinih polja ReCaptcha na kojoj korisnik menja željene podatke.
-            \item Korisnik pokušava da promeni podatke.
-            \item Novi podaci korisnika su sačuvani.
-            \item Nakon uspešne promene podataka sistem obaveštava korisnika o uspešnoj akciji.
+            \item Korisnik unosi svoju email adresu i šifru u polja koja su za to predoređena
+            \item Korisnik šalje sistemu zahtev za prijavu
+            \item Sistem autentifikuje korisnika
+            \item Sistem prikazuje korisniku početnu stranicu u zavisnosti od uloge:
+        %    \begin{enumerate}
+         %       \item Administrator - admin panel za upravljanje sistemom
+          %      \item Glavni urednik - lista novopristiglih radova
+         %       \item Urednik - lista radova koji su poslednji dodeljeni od strane glavnog urednika
+          %      \item Recenzent - lista radova koji su poslednji ponuđeni za recenziju od strane urednika
+          %      \item Autor - listu svojih radova
+          %  \end{enumerate}
         \end{enumerate}
     \item Alternativni tok događaja:
         \begin{enumerate}
-            \item Medju promenjenim podacima je i email adresa
+            \item Autentifikacija korisnika nije uspela zbog neispravno unetih podataka
                 \begin{enumerate}
-                    \item Nakon 2. koraka sistem ispisuje poruku uspešnosti promene svih korisničkih podataka osim email adrese. Ispisuje se obaveštenje da korisnik treba da potvrdi svoju novu email adresu tako što će posetiti link koji mu je na tu adresu poslat.
-                    \item Korisnik prelazi na korak 3 glavnog toka podataka.
+                    \item Nakon 2. koraka osnovnog toka, sistem ispisuje poruku o neuspešnoj autentikaciji zbog neispravno unetih podataka.
+                    \item Korisnik ponavlja korake 1. i 2. osnovnog toka.
+                \end{enumerate}
+            \item Autentifikacija korisnika nije uspela zbog greške u sistemu
+                \begin{enumerate}
+                    \item Nakon 2. koraka osnovnog toka, sistem ispisuje poruku o neuspešnoj autentifikaciji zbog greške u sistemu
+                    \item Korisnik obaveštava administratora časopisa o postojanju tehničkih problema u sistemu.
+                \end{enumerate}
+        \end{enumerate}
+\end{itemize}
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=1\linewidth]{UpravljanjeNalozimaIKorisnicima.PNG}
+    \caption{Prijavljivanje korisnika}
+    \label{fig:my_label}
+\end{figure}
+
+
+
+\subsection{Promena ličnih podataka}
+\begin{itemize}
+    \item Akter: Korisnik (Administrator, Glavni urednik, Urednik, Recenzent, Autor)
+    \item Kratak opis: Korisnik sistema želi da promeni neke od ličnih podataka
+    \item Preduslovi: Korisik postoji u sistemu.
+    \item Postuslovi: Nema
+    \item Osnovni tok događaja:
+        \begin{enumerate}
+            \item Korisnik šalje zahtev sistemu za prikaz forme za promenu podataka, koja je slična formi za registraciju, na kojoj korisnik menja željene podatke.
+            \item Korisnik menja podatke.
+            \item Korisik šalje zahtev sistemu za čuvaje promenjenih podataka.
+            \item Sistem je uspešno sačuvao nove podatke.
+            \item Sistem obaveštava korisnika o uspešnoj promeni podataka.
+        \end{enumerate}
+    \item Alternativni tok događaja:
+        \begin{enumerate}
+            \item Među promenjenim podacima je i email adresa
+                \begin{enumerate}
+                    \item U 5. koraku osnovnog toka, sistem obaveštava korisnika o uspešnosti promene svih korisničkih podataka osim email adrese.
+                    \item Sistem ispisuje obaveštenje korisniku da treba da potvrdi svoju novu email adresu tako što će posetiti link koji mu je na tu adresu poslat.
+                    \item Korisnik šalje sistemu potvrdu nove email adrese
+                    \item Sistem obaveštava korisika o uspešnoj promeni email adrese.
                 \end{enumerate}
             \item Neko od obaveznih polja nije popunjeno ili neko od polja ne odgovara formatu koji je za to polje zadat regularnim izrazom
                 \begin{enumerate}
-                    \item Nakon 2. koraka sistem ispisuje poruku o grešci i obaveštava korisnika da podaci nisu uspešno izmenjeni.
-                    \item Korisnik se vraća na korak 1 glavnog toka.
+                    \item U 4. koraku osnovnog toka, sistem ispisuje poruku o grešci i obaveštava korisnika da podaci nisu uspešno izmenjeni.
+                    \item Korisnik se vraća na korak 1. osnovnog toka.
                 \end{enumerate}
         \end{enumerate}
 \end{itemize}
@@ -237,20 +271,26 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
 \subsection{Promena korisničkih podataka}
 \begin{itemize}
     \item Akter: Administrator
-    \item Kratak opis: Korisnik želi da promeni neke od ličnih podataka drugih korinika
+    \item Kratak opis: Administrator sistema želi da promeni neke od ličnih podataka drugih korinika
+    \item Preduslovi: Nema
+    \item Postuslovi: Nema
     \item Osnovni tok događaja:
         \begin{enumerate}
-            \item Administratoru se prikazuje panel u kojem se nalazi spisak korisnika kojima može menjati lične informacije.
+            \item Administratoru šalje sistemu zahtev za prikaz spiska korisnika kojima može menjati lične informacije.
+            \item Sistem prikazuje administratoru sistema spisak korisika.
             \item Administrator bira željenog korisnika.
-            \item Administratoru se prikazuje formular na kome može menjati lične podatke korisnika (sve osim email-a).
-            \item Nakon uspešne promene podataka sistem obaveštava administratora o uspešnoj akciji.
+            \item Sistem prikazuje administrator formular na kome može menjati lične podatke korisnika (sve osim email-a).
+            \item Administrator menja lične podatke koristika.
+            \item Administrator šalje sistemu zahtev za čuvanje novih ličnih podataka korisnika.
+            \item Sistem je uspešno promenio podatke odaranog korisnika.
+            \item Sistem obaveštava administratora o uspešnoj akciji.
         \end{enumerate}
     \item Alternativni tok događaja:
         \begin{enumerate}
             \item Neko od obaveznih polja nije popunjeno ili neko od polja ne odgovara formatu koji je za to polje zadat regularnim izrazom
                 \begin{enumerate}
-                    \item Nakon 2. koraka sistem ispisuje poruku o grešci i obaveštava administratora da podaci nisu uspešno izmenjeni.
-                    \item Administrator se vraća na korak 3 glavnog toka.
+                    \item U 7. koraku osnovnog toka sistem ispisuje poruku o grešci i obaveštava administratora da podaci nisu uspešno izmenjeni.
+                    \item Administrator se vraća na 5. korak osnovnog toka.
                 \end{enumerate}
         \end{enumerate}
 \end{itemize}
@@ -259,20 +299,34 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
 \begin{itemize}
     \item Akter: Glavni urednik časopisa
     \item Kratak opis: Glavni urednik časopisa razmatra sve radove koji su prihvaćeni i vrši odabir radova koji će ući u tekuće izdanje časopisa.
-    \item Osnovni tok događaja:(Ponavljati korake 3, 4, 5. i 6. dok se postigne traženi broj radova ili traženi broj stranica za tekuće izdanje)
+    \item Preduslovi: Postoje prihvaćeni radovi koji nisu objavljeni
+    \item Postuslovi: Nema
+    \item Osnovni tok događaja:
         \begin{enumerate}
             \item Glavni urednik upućuje upit sistemu za sve prihvaćene radove koji nisu objavljeni ni u jednom dosadašnjem izdanju časopisa.
             \item Sistem vraća spisak svih takvih radova.
             \item Glavni urednik pregleda sledeći rad.
             \item Glavni urednik donosi odluku da li će rad ući u tekuće izdanje časopisa.
             \item Ukoliko će rad ući u tekuće izdanje: Glavni urednik šalje zahtev sistemu da se rad ubaci u radnu verziju tekućeg izdanja časopisa.
-            \item Sistem dodaje rad u radnu verziju tekućeg izdanja.
+            \item Sistem dodaje rad u radnu verziju tekućeg izdanja.\\ Ponavljati korake 3, 4, 5 i 6 dok se postigne traženi broj radova ili traženi broj stranica za tekuće izdanje)
         \end{enumerate}
     \item Alternativni tok događaja:
         \begin{enumerate}
-            \item  (2) Sistem ne vraća uspešno spisak prohvaćenih radova. Glavni urednik pokušava ponovo da izvrši korak 1. Ukoliko ne uspe, obraća se administratoru časopisa.
-            \item (3) Sistem ne vraća uspešno sledeći rad koji glavni urednik želi da pregleda. Glavni urednik pokušava ponovo da pregleda rad. Ukoliko ne uspe, obraća se administratoru časopisa.
-            \item (6) Sistem ne dodaje rad u radnu verziju tekučeg izdanja. Glavni urednik pokušava ponovo. Ukoliko ne uspe, obraća se administratoru časopisa.
+            \item Sistem ne vraća uspešno spisak prihvaćenih radova.
+                \begin{enumerate}
+                    \item U 2. koraku osnovnog toka, sistem ne vraća uspešno spisak prihvaćenih radova i obaveštava glavnog urednika o grešci.
+                    \item Glavni urednik se vraća na 1. korak osnovnog toka ili se obraća se administratoru.
+                \end{enumerate}
+            \item Sistem ne otvara uspešno sledeći rad koji glavni urednik želi da pregleda.
+                \begin{enumerate}
+                    \item U 3. koraku osnovnog toka, sistem ne otvara uspešno rad koji glavni urednik želi da pregleda i prikazuje obaveštenje o grešci.
+                    \item Glavni urednik se vraća na 3. korak osnovnog toka ili se obraća administratoru časopisa.
+                \end{enumerate}
+            \item Sistem ne dodaje rad u radnu verziju tekućeg izdanja.
+            \begin{enumerate}
+                \item Sistem ne dodaje rad u radnu verziju tekučeg izdanja i prikazuje poruku o grešci.
+                \item Glavni urednik se vraća na 6. korak osnovnog toka ili se obraća administratoru.
+            \end{enumerate}
         \end{enumerate}
 \end{itemize}
 
@@ -283,10 +337,42 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
     \label{fig:my_label}
 \end{figure}
 
+\subsection{Dodela uloga}
+\begin{itemize}
+    \item Akter: Glavni urednik
+    \item Kratak opis: Glavni urednik časopisa dodeljuje recenzentsku ili uredničku ulogu postojećem korisniku sistema.
+    \item Preduslovi: Postoje korisnici sistema koji nemaju ulogu recenzenta ili urednika.
+    \item Postuslovi: Nema
+    \item Osnovni tok događaja:
+        \begin{enumerate}
+            \item Glavni urednik upućuje upit sistemu za spisak svih korisnika sistema.
+            \item Sistem vraća spisak svih korisnika sistema.
+            \item Glavni urednik bira korisnika sistema.
+            \item Glavni urednik dodeljuje ulogu recenzenta ili urednika korisniku sistema.
+            \item Sistem čuva izmene o ulozi korisnika.\\
+            Ponavljati korake 3, 4 i 5 dok za tim ima potrebe.
+        \end{enumerate}
+    \item Alternativni tok događaja:
+        \begin{enumerate}
+            \item Sistem ne vraća uspešno spisak korisnika sistema.
+            \begin{enumerate}
+                \item U 2. koraku osnovnog toka, sistem ne vraća uspešno spisak korisnika sistema i obaveštava glavnog urednika o grešci.
+                \item Glavni urednik se vraća na 1. korak osnovnog toka ili se obraća administratoru.
+            \end{enumerate}
+            \item Sistem ne čuva izmene o ulozi korisnika.
+            \begin{enumerate}
+                \item U 5. koraku osnovnog toka, sistem ne čuva izmene o ulozi korisnika i obaveštava glavnog urednika o grešci.
+                \item Glavni urednik se vraća na 4. korak osnovnog toka ili se obraća administratoru.
+            \end{enumerate}
+        \end{enumerate}
+\end{itemize}
+
 \subsection{Pregled radne verzije izdanja časopisa}
 \begin{itemize}
-    \item Akter: Glavni urednik časopisa
+    \item Akter: Glavni urednik
     \item Kratak opis: Glavni urednik vrši pregled radne verzije tekućeg izdanja časopisa.
+    \item Preduslovi: Nema
+    \item Postuslovi: Nema
     \item Osnovni tok događaja:
         \begin{enumerate}
             \item Glavni urednik zahteva od sistema pregled radne verzije tekućeg izdanja časopisa.
@@ -294,14 +380,20 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
     \item Alternativni tok događaja:
         \begin{enumerate}
-            \item  (2) Sistem ne prikazuje radnu verziju. Glavni urednik pokušava ponovo da izvrši korak 1. Ukoliko ne uspe, obraća se administratoru časopisa.
+            \item Sistem ne prikazuje radnu verziju časopisa.
+            \begin{enumerate}
+                \item U 2. koraku osnovnog roka, sistem ne prikazuje radnu verziju časopisa i obaveštava glavnog urednika o grešci.
+                \item Glavni urednik se vraća na 1. korak osnovnog toka ili se obraća administratoru.
+            \end{enumerate}
         \end{enumerate}
 \end{itemize}
 
 \subsection{Pregled prethodnih izdanja časopisa}
 \begin{itemize}
-    \item Akter: Korisnik informacionog sistema
+    \item Akter: Korisnik
     \item Kratak opis: Korisnik informacionog sistema vrši pregled prethodnog izdanja časopisa.
+    \item Preduslovi: Postoji bar jedno izdanje časopisa.
+    \item Postuslovi: Nema
     \item Osnovni tok događaja:
         \begin{enumerate}
             \item Korisnik zahteva od sistema pregled spisak prethodnih izdanja časopisa.
@@ -311,10 +403,17 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
     \item Alternativni tok događaja:
         \begin{enumerate}
-            \item  (2) Sistem ne prikazuje spisak prethodnih izdanja. Korisnik pokušava ponovo da izvrši korak 1. Ukoliko ne uspe, obraća se administratoru časopisa.
-            \item (4) Sistem ne prikazuje traženo izdanje časopisa. Korisnik pokušava ponovo da izvrši korak 3. i eventualno menja izdanje koje želi da pregleda. Ukoliko korak 4. ne uspe, obraća se administratoru časopisa.
+            \item Sistem ne prikazuje spisak prethodnih izdanja.
+            \begin{enumerate}
+                \item Sistem ne prikazuje spisak prethodnih izdanja časopisa i obaveštava korisnika o grešci.
+                \item Korisnik se vraća na 1. korak osnovnog toka, odustaje ili se obraća administratoru.
+            \end{enumerate}
+            \item Sistem ne prikazuje traženo izdanje časopisa.
+            \begin{enumerate}
+                \item Sistem ne prikazuje traženo izdanje časopisa i obaveštava korisnika o grešci.
+                \item Korisnik se vraća na 3. korak osnovnog toka, pri čemu eventualno menja izdanje koje želi da pregleda, ili se obraća administratoru.
+            \end{enumerate}
         \end{enumerate}
 \end{itemize}
-
 
 \end{document}
