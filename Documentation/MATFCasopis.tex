@@ -283,5 +283,38 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
     \label{fig:my_label}
 \end{figure}
 
+\subsection{Pregled radne verzije izdanja časopisa}
+\begin{itemize}
+    \item Akter: Glavni urednik časopisa
+    \item Kratak opis: Glavni urednik vrši pregled radne verzije tekućeg izdanja časopisa.
+    \item Osnovni tok događaja:
+        \begin{enumerate}
+            \item Glavni urednik zahteva od sistema pregled radne verzije tekućeg izdanja časopisa.
+            \item Sistem prikazuje radnu verziju tekućeg izdanja časopisa.
+        \end{enumerate}
+    \item Alternativni tok događaja:
+        \begin{enumerate}
+            \item  (2) Sistem ne prikazuje radnu verziju. Glavni urednik pokušava ponovo da izvrši korak 1. Ukoliko ne uspe, obraća se administratoru časopisa.
+        \end{enumerate}
+\end{itemize}
+
+\subsection{Pregled prethodnih izdanja časopisa}
+\begin{itemize}
+    \item Akter: Korisnik informacionog sistema
+    \item Kratak opis: Korisnik informacionog sistema vrši pregled prethodnog izdanja časopisa.
+    \item Osnovni tok događaja:
+        \begin{enumerate}
+            \item Korisnik zahteva od sistema pregled spisak prethodnih izdanja časopisa.
+            \item Sistem prikazuje spisak prethodnih izdanja.
+            \item Korisnik bira izdanje koje želi da pregleda.
+            \item Sistem mu prikazuje traženo izdanje časopisa.
+        \end{enumerate}
+    \item Alternativni tok događaja:
+        \begin{enumerate}
+            \item  (2) Sistem ne prikazuje spisak prethodnih izdanja. Korisnik pokušava ponovo da izvrši korak 1. Ukoliko ne uspe, obraća se administratoru časopisa.
+            \item (4) Sistem ne prikazuje traženo izdanje časopisa. Korisnik pokušava ponovo da izvrši korak 3. i eventualno menja izdanje koje želi da pregleda. Ukoliko korak 4. ne uspe, obraća se administratoru časopisa.
+        \end{enumerate}
+\end{itemize}
+
 
 \end{document}
