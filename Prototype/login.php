@@ -16,12 +16,12 @@ include 'header.php';
 				<div class="w3-container w3-theme-dark">
   					<h2 style="padding: 0;">Log in</h2>
 				</div>
-					<form class="w3-container w3-padding-32">
+					<form action = "auth.php" method = "post" class="w3-container w3-padding-32">
 						<label>User Name</label>
-						<input class="w3-input" type="text">
+						<input class="w3-input" name="username" type="text">
 						<label>Password</label>
-						<input class="w3-input" type="password">
-						<button class="w3-button w3-block w3-section	 w3-theme-dark w3-ripple w3-padding">Log in</button>
+						<input class="w3-input" name="password" type="password">
+						<input class="w3-button w3-block w3-section w3-theme-dark w3-ripple w3-padding" type="submit" value="Log in"/>
 					</form>
 			</div>	
 		</div>

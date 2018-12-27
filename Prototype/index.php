@@ -2,7 +2,8 @@
 
 <html lang="en-US">
     <?php
-$logged_in = false;
+session_start();
+$logged_in = isset($_SESSION['login_user']);
 include 'head.php';
     ?>
     <body style=" margin: 0 !important;

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-US">
     <?php
-$logged_in = false;
+session_start();
+$logged_in = isset($_SESSION['login_user']);
 include 'head.php';
     ?>
     <body style=" margin: 0 !important;
@@ -15,7 +16,23 @@ include 'header.php';
 	<div class="w3-main" style="margin-top: 2%">
 		<div class="w3-card w3-content w3-container">
 			<h2>Articles in press:</h2>
-			<ul class="w3-ul">
+			<ul class="w3-ul" id="lista">
+			<script type="text/javascript">
+				$.ajax({
+					type: 'GET',
+					url: 'papers.php',
+					dataType: 'json',
+					success: function(data)
+					{
+						$.each(data, function(index, element)
+						{
+							lista = document.getElementById("lista");
+							lista.innerHTML += '<li class="w3-hover-black"><a style="color:blue;" class="w3-link" href="' + element.pdfStorageLinkId + '" target="_blank"> "' + element.naslov + '"</a></li>';
+						})
+					}
+				})
+			</script>
+			<!--
   				<li class="w3-hover-black"><a style="color:blue;" class="w3-link" href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2544-0">
   				"Predicting adverse drug reactions through interpretable deep learning framework"</a>; Authors: Sanjoy Dey, Heng Luo, Achille Fokoue, Jianying Hu and Ping Zhang</li>
   				<li class="w3-hover-black"><a style="color:blue;" class="w3-link" href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2574-7">
@@ -36,7 +53,7 @@ include 'header.php';
   				"Capturing context-specific regulation in molecular interaction networks"</a>; Authors: Stephen T. A. Rush and Dirk Repsilber</li>
   				<li class="w3-hover-black"><a style="color:blue;" class="w3-link" href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2507-5">
   				"Deep clustering of protein folding simulations"</a>; Authors: Debsindhu Bhowmik, Shang Gao, Michael T. Young and Arvind Ramanathan</li>
-			</ul>
+			</ul>-->
 		</div>
 	</div>
 		<!--------------- END OF CONTENT ---------------------->  
