@@ -3,152 +3,224 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english, serbian]{babel}
 \usepackage{comment}
+\usepackage[unicode]{hyperref}
+\hypersetup{colorlinks,citecolor=green,filecolor=green,linkcolor=blue,urlcolor=blue}
+\usepackage{cleveref}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{datetime}
+\usepackage{rotating}
+\usepackage{afterpage}
 
-\title{MATF Elektronski časopis}
-\date{2018}
-\author{Dimitrije Špadijer, Božidar Antić, Nadežda Bogdanović}
-
+\newdateformat{mydate}{\THEDAY. \monthname[\THEMONTH] \THEYEAR.}
 
 \begin{document}
-\maketitle
-\newpage
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{\LARGE Matematički fakultet}\\[1.5cm] % Name of your university/college
+\textsc{\Large Projekat iz predmeta Informacioni sistemi}\\[0.5cm] % Major heading such as course name
+\textsc{\large Školska 2018/2019.}\\[0.5cm] % Minor heading such as course title
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.4cm]
+{ \huge \bfseries MATF Časopis}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+ 
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Autori:}\\
+Dimitrije \textsc{Špadijer}\\
+Božidar \textsc{Antić}\\
+Nadežda \textsc{Bogdanović}
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Predavači:} \\
+dr Saša \textsc{Malkov}\\
+Aleksandra \textsc{Kocić}
+\end{flushright}
+\end{minipage}\\[2cm]
+
+% If you don't want a supervisor, uncomment the two lines below and remove the section above
+%\Large \emph{Author:}\\
+%John \textsc{Smith}\\[3cm] % Your name
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+\mydate
+{\large \today}\\[2cm] % Date, change the \today to a set date if you want to be precise
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\includegraphics[width=40mm]{logo.jpg}\\[1cm] % Include a department/university logo - this will require the graphicx package
+ 
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+
 \tableofcontents
 \newpage
 
 \section{Cilj projekta}
+\label{section:ciljprojekta}
 
-Razviti veb platformu koja će omogućiti sve neophodne funkcionalnosti za uređivanje elektronskog časopisa. Časopis izlazi dva puta godišnje i tematski je organizovan. Jezik časopisa je engleski.
+Cilj projekta je razviti web platformu koja će omogućiti sve neophodne funkcionalnosti za uređivanje elektronskog časopisa. Jezik časopisa je engleski i tematski je organizovan.
 
-\section{ Analiza sistema}
+Radi boljeg razumevanja projekta, sam dokument je podeljen na 4 tematske celine: \textbf{Analiza sistema}, \textbf{Slučajevi upotrebe}, \textbf{Model baze podataka} i \textbf{Arhitektura sistema}.
+
+Javni repozitorijum projekta se nalazi na: \url{https://github.com/Nacili/MATFCasopis}
+
+Sistem je, sa određenim izmenama, projektovan na osnovu dokumenta \cite{ecas} primljenog od naručioca.
+
+\newpage
+
+\section{Analiza sistema}
+\label{section:analiza}
+
+U ovom odeljku biće prikazana podela sistema na \textbf{module}: \textit{Učesnici}, \textit{Izdanje časopisa} i \textit{Rad}, kao i opis samih modula. Ostvarivanje njihovih zahteva i specifikacije biće prikazane u odeljku \ref{section:slucajeviupotrebe}. Opšti pogled na sistem prikazan je dijagramom konteksta na slici \ref{fig:konteksta}
+\begin{figure}[hbt!]
+    \begin{center}
+    \includegraphics[width=1\linewidth]{Konteksta.PNG}
+    \end{center}
+    \caption{Dijagram konteksta \cite{smalkov} \cite{vparadigm}}
+    \label{fig:konteksta}
+\end{figure}
 
 \subsection{Učesnici}
-
-    Atributi: id, ime, prezime, korisničko ime, šifra, institucija, email, telefon(opciono), poštanski broj(opciono)
-    Korisnici sistema imaju mogućnost upravljanja sopstvenim nalogom (promena korisničkog imena i šifre). Korisnici se međusobno razlikuju po ulogama i privilegijama koje su im dodeljene: Administrator, glavni urednik, urednik, recenzent, autor
-
-    \subsubsection{Administrator}
-    Administrator je korisnik sistema koji upravlja podešavanjima sistema: dodele korisničkih imena i šifara, dodavanje i uklanjanje novih korisnika, upravljanje nalozima, održavanje sistema - dakle stvari tehnološke prirode. On se odmah od početka korišćenja sistema nalazi u bazi podataka - ne registruje se. Iako su mu vidljivi svi podaci o svim korisnicima, radovima i brojevima časopisa, nema pravo dodele uloga (urednika i recenzenata), osim u slučaju dodele uloge glavnom uredniku.
-
+\label{subsection:ucesnici}
+    
+    Učesnici se dele u 5 korisničkih grupa, koje se međusobno razlikuju po \textit{ulogama}, a samim tim i \textit{privilegijama}\footnote{ Privilegija je posao koji korisnik može da obavlja na sistemu} koje su im dodeljene. Za razliku od ostalih, uloge \textit{Administrator} i \textit{Glavni urednik} mogu biti dodeljene samo jednom korisniku. Osnovna uloga, koja obezbeđuje i privilegije zajedničke svim ostalim korisnicima (sem administratoru) je \textit{Autor}.
+    
+   \subsubsection{Autor}
+   \label{subsubsection:autor}
+    Osnovne privilegije:
+    \begin{itemize}
+        \item Registracija
+        \item Logovanje
+        \item Odjava
+        \item Promena sopstvenih podataka
+        \item Komunikacija sa ostalim korisnicicma
+        \item Prijava rada
+        \item Ažuriranje rada (ostvaruje se kroz prijavu nove verzije istog rada)
+        \item Povlačenje rada
+    \end{itemize}
+    
+    \subsubsection{Recenzent}
+    \label{subsubsection:recenzent}
+     Potencijalni recenzent je onaj koji je već recenzirao neki rad, ili  neko ko je  prilikom registracije čekirao polje "nemam ništa protiv da me kontaktirate za recenziranje nekog rada". Isto ovo polje može da čekira i kasnije, na svojoj korisničkoj stranici.
+     
+    Dodatne privilegije:
+    \begin{itemize}
+        \item Odbijanje recenziranja rada
+        \item Pregled svih radova za koje je prihvaćena recenzija
+        \item Ostavljanje recenzije na rad (ostvaruje se ostavljanjem recenzije na verziju rada)
+    \end{itemize}
+    
+    \subsubsection{Urednik}
+    \label{subsubsection:urednik}
+    Dodatne privilegje:
+    \begin{itemize}
+        \item Slanje predloga za recenziranje
+        \item Odbacivanje rada
+        \item Prihvatanje rada
+        \item Komentarisanje rada
+    \end{itemize}
+    
     \subsubsection{Glavni urednik}
-    Na vrhu piramide odlučivanja. Ne registruje se u sistem, administrator ga dodaje. Prilikom prijavljivanja prikazuje mu se u prvom delu prozora spisak novo-prijavljanih radova u sistemu označenih na upadljiv način. U drugom delu rada nalazi se paleta za pretraživanje: po autoru, imenu rada, datumu, statusu rada, statusu urednika, statusu autora.. Odabirom autora prikazuju mu se informacije o autoru. Odabirom rada prelazi se na radni prostor u kojem se ispisuje: naziv rada i informacije o autorima (ime, prezime, status svakoga od njih). Sam rad se nalazi u prilogu. G.urednik ima opciju da: rad odbaci bez konsutovanja sa ostalima i da rad prosledi uredniku. Iz padajuće liste bira urednika kojem šalje rad, u suprotnom, rad se arhivira kao odbačen. Glavni urednik ima pravo i da dodeli recenzente, urednike i da odluči koji će se rad objavljivati u kojem broju, da doda autora na crnu listu. Ima pristup odeljku "Upravljanje korisnicima" u kojem može da dodeli uloge urednicima/recenzentima, ili da ih oduzme. Takođe ima mogućnost ostavljanja komentar na rad kada hoće da ga izmeni ili odobri/odbaci bez recenzije. On odlučuje koji će se radovi naći u kojem broju.
-
-    \subsubsection{Urednici}
-    Urednici su specijalizovani za određene oblasti (oblast se pridodaje kao atribut). Primaju od g.urednika rad, čitaju ga i šalju predloge recenzentima. Urednik ima pravo da odbaci/prihvati rad, iako recenzenti misle da je rad za objavljivanje, ali onda treba da napiše obrazloženje. Ako urednik misli da je radu potrebna neka izmena, ima opciju da rad označi za menjanje, označava ga i otvara mu se polje gde unosi komentar urednika, koji objašnjava šta je sve potrebno promeniti. Ako komentar  na rad već postoji, on se učita u prostor za pisanje komentara i urednik ga menja ili briše i dodaje novi. Komentar urednika je opciona stavka. Po istom principu funkcionište i odbijanje/prihvatanje bez recenzije. Urednik prilikom logovanja na sistem ima u gornjem delu prozora spisak novih radova koje mu je poslao g.urednik. U donjem delu prozora je paleta za pretraživanje, opisana kao kod g.urednika. Odabirom na novi rad urednik ga ili odbaci, ili mu dodeli recenzente.
-
-    \subsubsection{Recenzenti}
-    Prilikom logovanja imaju spisak novih radova poslatih od urednika. Rad mogu da odbiju, i dalje nemaju više nikakva zaduženja vezana za taj rad. Takođe, mogu da pristupe i spisku svih dosadašnjih radova: prihvaćenih i odbijenih. Nakon pročitanog rada, recenzent popunjava formular za recenziju i objavljuje je. Potencijalni recenzent je onaj koji: je već recenzirao neki rad, ko je  kao korisnk čekirao polje "nemam ništa protiv da me kontaktirate za recenziranje nekog rada"
-
-    \subsubsection{Autori}
-    Dodatni atributi: broj dosadašnjih prilaganja radova, broj dosada objavljenih radova. Postoji i crna lista nepoželjnih autora koja sadrži ime autora i razlog zbog kog se nalazi na listi:  plagiranje, različiti vidovi varanja utvrđeni od strane ostalih korisnika sistema. Autori prijavljuju rad. Prilikom prijave ispunjavaju formular i označavaju da li je to novi rad, ili nova verzija rada koji je označen za ispravku. Ako u nekom trenutku žele da povuku rad, šalju zahtev za povlačenje rada.
-
-\subsection{Časopis}
-Atributi: ISSN, godina, naslov, g.urednik, urednici, minimalan i maksimalan broj radova po izdanju
+    \label{subsubsection:glavniurednik}
+    Ne registruje se u sistem, već ga sam administrator dodaje. Nalazi se na vrhu piramide odlučivanja: ako je urednik odlučio da se rad prihvata/odbacuje, glavni urednik može tu odluku da promeni i njegova odluka je konačna.
+    Dodatne privilegije:
+     \begin{itemize}
+         \item Prihvatanje rada
+         \item Odbacivanje rada
+         \item Ostavljanje komentara na rad
+         \item Dodela uloga korisnicima
+         \item Upravljanje izdanjem časopisa (odlučivanje o tome koji će se rad naći u kojem broju, minimalan i maksimalan broj radova po izdanju...)
+     \end{itemize}
+    
+    \subsubsection{Administrator}
+    \label{subsubsection:administrator}
+    On se odmah od početka korišćenja sistema nalazi u bazi podataka - ne registruje se.
+    Posebne privilegije:
+    \begin{itemize}
+        \item Upravljanje podešavanjima sistema (promena podataka samom časopisu i ostale stvari tehnološke prirode)
+        \item Upravljanje podešavanjima korisnika (promena korisničkih imena, šifri, dodavanje glavnog urednik u sistem...)
+    \end{itemize}
+    
+\subsection{Izdanje časopisa}
+\label{section:izdanjecasopisa}
+Izdanje predstavlja broj jednog časopisa i može biti zimsko i letnje. Glavni urednik odlučuje koji će se radovi u njemu naći i u kom redosledu, koliko će ih biti i koji naslov će tekući broj da nosi.
 
 \subsection{Rad}
-    Atributi: broj, naslov, godina, imena autora, datum prve prijave, datum poslednje prijave, log prijava, rad u pdf formatu, recenzenti, urednik, status, broj verzija, objavljen
-
-    Statusi rada:
+\label{subsection:rad}
+    Statusi rada koji ujedno opisuju i njegov životni ciklus prikazana su na slici \ref{fig:stanjarada}:
+    \begin{figure}[ht!]
+    \begin{center}
+    \includegraphics[width=1.1\linewidth]{StanjeRada.PNG}
+    \end{center}
+    \caption{Stanja rada \cite{alex} \cite{vparadigm}}
+    \label{fig:stanjarada}
+    \end{figure}
     \begin{itemize}
-        \item prijavljen: dobija status kada ga autor prijavi
-        \item na recenziji: kada ga primi recenzent na recenziju
-        \item na doradi: ovaj status dobija kada ga g.urednik/urednik označi da treba da ide na doradu
-        \item povučen: ako je autor podneo zahtev za povlačenje rada
-        \item odbijen bez recenzije: od strane g.urednika/urednika. U tom slučaju je potrebno priložiti komentar (funkcioniše isto kao kada se rad označava za doradu). Rad je odbijen bez recenzije i ako urednik nije mogao da pronađe recenzente koji žele da recenziraju rad, a sam nije želeo da čita ceo rad
-        \item odbijen sa recenzijom
-        \item prihvaćen bez recenzije: slično kao odbijen bez recenzije, potrebno je ostaviti komentar
-        \item prihvaćen sa recenzijom
+        \item prijavljen: rad može imati više autora, ali ga samo jedan od njih prijavljuje i smatra se odgovornim licem za taj rad. Prilikom prijavljivanja rada, autor popunjava formular u kojem navodi i ostale autore, koji se, ako već nisu registrovani, dodaju u sistem.
+        \item prihvaćen bez recenzije: (glavni) urednik je odlučio da prihvata rad bez konsultacije sa recenzentima. U tom slučaju je dužan da ostavi komentar na rad.
+        \item odbijen bez recenzije: (glavni) urednik je odlučio da odbije rad bez konsultacije sa recenzentima, nakon čega ostavlja komentar na rad. Rad može dobiti ovaj status i ako ni jedan recenzent ne želi da ga recenzira.
+        \item na recenziji: urednik označi recenzente za rad i status rada automatski postaje "na recenziji"
+        \item na doradi: ovaj status dobija kada  (glavni) urednik označi da rad treba da ide na doradu, bez obzira na to da li je pre toga bio na recenziji ili ne. Ako je rad pre dorade bio na recenziji, poželjno je i da na recenziju ide nakon obrade i da mu se dodele pređašnji recenzenti
+        \item povučen: autor je podneo zahtev za povlačenje rada
+        \item odbijen sa recenzijom: (glavni) urednik je nakon recenziranja odlučio da se rad odbije
+        \item prihvaćen sa recenzijom: (glavni) urednik je nakon recenzije odlučio da prihvati rad
     \end{itemize}
-
-
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=1\linewidth]{StanjeRada.PNG}
-    \caption{Stanja rada}
-    \label{fig:my_label}
-\end{figure}
-
-
-\subsection{Prijavljivanje i registrovanje korisnika}
-Prilikom registrovanja, korisnik ima mogućnost da označi opciju "nemam ništa protiv ako želite da me odaberete kao recenzenta". Ako ovu opciju nije čekirao, može to da učini kasnije kada se prijavi.
-\begin{itemize}
-    \item Registrovanje: popuni se formular i pošalju podaci. Administrator ih prima i šalje šablon1 u kojem korisnika obaveštava koje mu je korisničko ime i šifra
-    \item Prijavljivanje: korisnik popuni formular i time se uloguje
-\end{itemize}
-
-\subsection{Komunikacija među korisnicima}
-Korisnik odabere šablon, otvori mu se radna površina za pisanje u koju se šablon učita. On taj šablon može sačuvati i ima opciju da ga pošalje, čime se šablon automatski šalje na mejl drugog saučesnika u komunikacji. Korisnik može i napraviti novi šablon i obrisati ga, ako nije predefinisan od strane sistema, kao što su dole navedeni šabloni.
-
-
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=\linewidth]{KomunikacijaMedjuKorisnicima.PNG}
-    \caption{Komunikacija Među Korisnicima}
-    \label{fig:my_label}
-\end{figure}
-
-
-\begin{itemize}
-\item Administrator ostalim korisnicima: šabloni 1 (uspešno registrovanje) i 2 (uspešna/neuspešna promena ličnih podataka)
-\item G.urednik urednicima: šablon 3 (o novopristiglom radu)
-\item G.urednik administratoru: šablon 4 (o brisanju korisnika iz sistema)
-\item Urednik recezentima: šablon 5 (predlog rada za recenziranje)
-\item Urednik autoru: šablon 6 (o tome kako je rad prihvaćen i šta treba da priloži) i  šablon 7 (odbijen i obrazloženje)
-\item Recenzent uredniku: šablon 7 (o tome da li odbija ili prihvata recenziju)
-\item Šablon 8 sistem šalje autoru kada (glavni) urednik ostavi komentar na rad koji je napisao.
-\end{itemize}
-
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=1\linewidth]{Konteksta.PNG}
-    \caption{Dijagram konteksta}
-    \label{fig:my_label}
-\end{figure}
-
-
-
-\subsection{Životni ciklus rada}
-\subsubsection{Prijavljivanje}
-Rad prijavljuje autor koji je ujedno i odgovorno lice za taj rad. Spisak autora koje rad sadrži kao atribut mogu biti reference na autore već poznate sistemu, inače o autoru će biti napravljen zapis u sistemu koji će biti moguće koristiti kao njegov kontakt u slučaju da je to potrebno (npr. poziv za učlanjenje).
-\subsubsection{Dodeljivanje urednicima i recenzentima}
-Rad je inicijalno prikazan glavnom uredniku koji ga dodeljuje uredniku. On zatim "nudi" rad recenzentima koji imaju mogućnost da prihvate ili odbiju tu ulogu. Obaveštenja o dodelama radova i ponudama recenzentskih uloga su realizovana putem slanja šablona (opisanim u delu 6) i praćena su akcijama sistema.
-\subsubsection{Recenziranje}
-Sa spiska svih recenzenata u sistemu, urednik odabira recenzenta, koji se automatski dodeljuje kao recenzent datom radu i šalje mu se obaveštenje o tome. Kada se prijavi na sistem, prijavljuje mu se spisak svih novih radova za koje je predložen. Ako želi da recenzira rad, on može odmah nastaviti da piše recenziju, a ako ne, može odabrati opciju "Ne želim da recenziram ovaj rad", čime ga sistem automatski uklanja sa spiska recenzenata za taj rad i uredniku se šalje poruka koja ga obaveštava o tome.Od recenzenta se, ako je prihvatio recenziranje, očekuje da popuni formular koje će sadržati delove koji su upućeni autoru i uredniku. Nakon objavljivanja, uredniku su vidljiva oba dela, a autoru samo deo namenjen njemu.
-\subsubsection{Komentarisanje rada}
-Rad može biti komentarisan od strane glavnog urednika i urednika i to u slučajevima kada je rad odbijen sa komentarom, koji će autor moći da pročita kao objašnjenje za preduzetu akciju, ili kada se rad označava za doradu, čime se autoru stavlja do znanja koje su to promene koje se zahtevaju.
-\subsubsection{Ažuriranje}
-Nakon što je rad od strane urednika označen za doradu, autor ima mogućnost da izmenjenu verziju rada ponovo prijavi. U tom slučaju potrebna je ponoviti i dodelu recenzenata. Kao u slučaju prvobitne dodele, uredniku je ponuđen spisak recenzenata na kome bi favorizovani bili oni koji su na tom radu već imali recenzentsku ulogu.
-\subsubsection{Menjanje statusa}
-Status rada je inicijalno postavljen na "prijavljen" i može biti promenjen akcijama korisnika sistema. Moguća stanja i akcije koje dovode do tih stanja su navedene u delu 2.3.
-
-
-\subsection{Sistemska podešavanja}
-Obavlja ih administrator: upravljnje podacima u bazi, dodavanje novih korisnika i uklanjanje postojećih... Na nivou sistema treba da postoji log svih aktivnosti koji treba da bude vidljv administratoru i glavnom uredniku
-
-\subsection{Šabloni i formulari}
-Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odeljku "Prilozi (Attachments)"
-
-
-
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=1\linewidth]{Nivo0.jpg}
-    \caption{Dijagram toka podataka nivoa 0}
-    \label{fig:my_label}
-\end{figure}
+    
+\newpage
 
 \section{Slučajevi upotrebe}
+\label{section:slucajeviupotrebe}
+Ovaj odeljak pruža detaljan opis načina na koji se sistem koristi. Glavni procesi koji se u njemu izdvajaju su prikazani na slici \ref{fig:nivo0}:
+\begin{figure}[h!]
+   \begin{center}
+    \includegraphics[width=1.15\linewidth]{Nivo0.png}
+    \end{center}
+    \caption{Dijagram toka podataka nivoa 0 \cite{smalkov} \cite{vparadigm}}
+    \label{fig:nivo0}
+\end{figure}
+
+%ovde treba da stoji slika
 
 \subsection{Upravljanje nalozima i korisnicima}
-
-
-\begin{figure}[hbt!]
+\label{subsection:upravljanjenalozimaikorisnicimasec}
+Kao što je prikazano na slici \ref{fig:upravljanjenalozimaikorisnicima}, proces obuhvata sledeće slučajeve upotrebe: \textit{registracija korisnika}, \textit{prijavljivanje korisnika}, \textit{odjava korisnika}, \textit{promena ličnih podataka}, \textit{promena korisničkih podataka}, \textit{dodela/oduzimanje uloga korisnicima}.
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=1\linewidth]{UpravljanjeNalozimaIKorisnicima.PNG}
-    \caption{Upravljanje nalozima i korisnicima}
-    \label{fig:my_label}
+    \includegraphics[width=0.9\linewidth]{UpravljanjeNalozimaIKorisnicima.PNG}
+    \caption{Upravljanje nalozima i korisnicima \cite{alex} \cite{vparadigm}}
+    \label{fig:upravljanjenalozimaikorisnicima}
 \end{figure}
 
 \subsubsection{Registracija korisnika}
+\label{subsubsection:registracijakorisnikasec}
 \begin{itemize}
     \item Akter: Korisnik
     \item Kratak opis: Korisnik unosi potrebne podatke kako bi se registrovao u sistemu
@@ -156,7 +228,7 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
     \item Postuslov: Novi korisnik je dodat u sistem
     \item Osnovni tok događaja:
         \begin{enumerate}
-            \item Korisnik unosi podatke u formular koji mu se prikazuje nakon zahteva za registracijom %(dok ne uradimo screenshot forme, ovo je placeholder formular sadrzi polja: First Name, Last Name, Title, Email, Confirm email, Password, Repeat Password, URL, Phone, Country, (check option) Available for reviewing role, Google ReCaptcha)
+            \item Korisnik unosi podatke u formular koji mu se prikazuje nakon zahteva za registracijom
             \item Korisnik pokušava da se registruje
             \item Sistem prikazuje narednu stranicu za potvrdu email adrese
             \item Korisnik potvrđuje svoju email adresu
@@ -182,27 +254,37 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                     \item Korisnik ponovo popunjava tražena polja.
                     \item Korisnik zatim ponavlja korak 2 iz osnovnog toka.
                 \end{enumerate}
-            \item ReCaptcha ne prepoznaje korisnika kao živu osobu
-                \begin{enumerate}
-                    \item Nakon 1. koraka sistem ne dozvoljava korisniku da nastavi sa registracijom.
-                    \item ReCaptcha se reinicijalizuje.
-                    \item Korisnik ponovo pokušava da "reši"\ ReCaptcha.
-                    \item Korisnik ponavlja korak c) ovog alternativnog toka 4 dok ne bude moguće preći na korak 2 osnovnog toka.
-                    \item Prelazi na korak 2 osnovnog toka.
-                \end{enumerate}
         \end{enumerate}
-\end{itemize}
+        \item Dodatak: slike \ref{fig:registracijakorisnika} i \ref{fig:registracijakorisnikaforma}
 
-
-\begin{figure}[hbt!]
+\begin{figure}[ht!]
     \centering
-    \includegraphics[width=1.2\linewidth]{RegistracijaKorisnika.PNG}
-    \caption{Registracija korisnika}
-    \label{fig:my_label}
+    \includegraphics[width=1.15\linewidth]{RegistracijaKorisnika.PNG}
+    \caption{Registracija korisnika \cite{smalkov} \cite{vparadigm}}
+    \label{fig:registracijakorisnika}
+\end{figure}
+%\afterpage{\clearpage}
+%\begin{sidewaysfigure}[ht!]
+%    \centering
+%    \includegraphics[width=1\linewidth]{RegistracijaKorisnika.PNG}
+%    \caption{Registracija korisnika}
+%    \label{fig:registracijakorisnika}
+%\end{sidewaysfigure}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=1\linewidth]{Register.png}
+    \caption{Registracija korisnika forma}
+    \label{fig:registracijakorisnikaforma}
 \end{figure}
 
+% U okviru ovog slučaja upotrebe treba da stoje slike
+
+\end{itemize}
+
+\newpage
 
 \subsubsection{Prijavljivanje korisnika}
+\label{subsubsection:prijavljivanjekorisnika}
 \begin{itemize}
     \item Akter: Korisnik
     \item Kratak opis: Korisnik unosi potrebne podatke kako bi se ulogovao u sistem
@@ -213,14 +295,7 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
             \item Korisnik unosi svoju email adresu i šifru u polja koja su za to predoređena
             \item Korisnik šalje sistemu zahtev za prijavu
             \item Sistem autentifikuje korisnika
-            \item Sistem prikazuje korisniku početnu stranicu u zavisnosti od uloge:
-        %    \begin{enumerate}
-         %       \item Administrator - admin panel za upravljanje sistemom
-          %      \item Glavni urednik - lista novopristiglih radova
-         %       \item Urednik - lista radova koji su poslednji dodeljeni od strane glavnog urednika
-          %      \item Recenzent - lista radova koji su poslednji ponuđeni za recenziju od strane urednika
-          %      \item Autor - listu svojih radova
-          %  \end{enumerate}
+            \item Sistem prikazuje korisniku početnu stranicu
         \end{enumerate}
     \item Alternativni tok događaja:
         \begin{enumerate}
@@ -235,15 +310,32 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                     \item Korisnik obaveštava administratora časopisa o postojanju tehničkih problema u sistemu.
                 \end{enumerate}
         \end{enumerate}
+        \item Dodatak: slika \ref{fig:registracijakorisnika}
 \end{itemize}
 
+\subsubsection{Odjavljivanje korisnika}
+\label{subsubsection:odjavljivanjekorisnika}
+\begin{itemize}
+    \item Akter: Korisnik
+    \item Kratak opis: Korisnik se odjavljuje iz sistema
+    \item Preduslovi: Korisnik postoji u sistemu i prijavljen je
+    \item Postuslovi: Nema
+    \item Osnovni tok događaja:
+        \begin{enumerate}
+            \item Korisnik šalje zahtev sistemu da ga odjavi
+            \item Sistem odjavljuje korisnika
+            \item Sistem prikazuje korisniku početnu stranicu
+        \end{enumerate}
+\end{itemize}
 
+\newpage
 
 \subsubsection{Dodela/Oduzimanje uloga korisnicima}
+\label{subsubsection:ulogesec}
 \begin{itemize}
     \item Akter: Glavni urednik
     \item Kratak opis: Glavni urednik časopisa dodeljuje/oduzima recenzentsku ili uredničku ulogu postojećem korisniku sistema.
-    \item Preduslovi: Postoje korisnici sistema koji nemaju ulogu recenzenta ili urednika. Korisnik kojem glavni urednik želi da dodeli ulogu recenzenta je označio da nema ništa protiv da mu bude dodeljena uloga recenzenta.
+    \item Preduslovi: Postoje korisnici sistema koji nemaju ulogu recenzenta ili urednika. Korisnik kojem glavni urednik želi da dodeli ulogu recenzenta je označio da nema ništa protiv da mu bude dodeljena uloga recenzenta. 
     \item Postuslovi: Nema
     \item Osnovni tok događaja:
         \begin{enumerate}
@@ -267,19 +359,19 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                 \item Glavni urednik se vraća na 4. korak osnovnog toka ili se obraća administratoru.
             \end{enumerate}
         \end{enumerate}
+        \item Dodatak: slika \ref{fig:uloge}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=1.15\linewidth]{DodelaUlogaKorisnicima.PNG}
+    \caption{Dodela uloga korisnicima \cite{smalkov} \cite{vparadigm}}
+    \label{fig:uloge}
+\end{figure}
 \end{itemize}
 
-
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=1\linewidth]{DodelaUlogaKorisnicima.PNG}
-    \caption{Dodela uloga korisnicima}
-    \label{fig:my_label}
-\end{figure}
-
-
+\newpage
 
 \subsubsection{Promena ličnih podataka}
+\label{subsubsection:promenalicnihpodataka}
 \begin{itemize}
     \item Akter: Korisnik (Administrator, Glavni urednik, Urednik, Recenzent, Autor)
     \item Kratak opis: Korisnik sistema želi da promeni neke od ličnih podataka
@@ -308,18 +400,20 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                     \item Korisnik se vraća na korak 1. osnovnog toka.
                 \end{enumerate}
         \end{enumerate}
+        \item Dodatak: slika \ref{fig:promenapodkor}
 \end{itemize}
 
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=1\linewidth]{PromenaPodatakaKorisnika.PNG}
-    \caption{Promena podataka korisnika}
-    \label{fig:my_label}
+    \includegraphics[width=0.9\linewidth]{PromenaPodatakaKorisnika.PNG}
+    \caption{Promena podataka korisnika \cite{smalkov} \cite{vparadigm}}
+    \label{fig:promenapodkor}
 \end{figure}
 
 
 \subsubsection{Promena korisničkih podataka}
+\label{subsubsection:promenakorisnickihpodataka}
 \begin{itemize}
     \item Akter: Administrator
     \item Kratak opis: Administrator sistema želi da promeni neke od ličnih podataka drugih korinika
@@ -346,9 +440,21 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
 \end{itemize}
 
+\newpage
+
 \subsection{Upravljanje izdanjem časopisa}
+\label{subsection:upravljanjeizdanjemsec}
+
+Kao što je prikazano na slici \ref{fig:upravljanjeizdanjem}, proces se sastoji od \textit{Odabira prihvaćenih radova za tekuće izdanje časopisa}, \textit{Pregleda radne verzije izdanja časopisa}, \textit{Pregled prethodnih izdanja časopisa}.
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=\linewidth]{UpravljanjeIzdanjemCasopisa.PNG}
+    \caption{Upravljanje izdanjem časopisa \cite{alex} \cite{vparadigm}}
+    \label{fig:upravljanjeizdanjem}
+\end{figure}
 
 \subsubsection{Odabir prihvaćenih radova za tekuće izdanje časopisa}
+\label{subsubsection:odabirradova}
 \begin{itemize}
     \item Akter: Glavni urednik časopisa
     \item Kratak opis: Glavni urednik časopisa razmatra sve radove koji su prihvaćeni i vrši odabir radova koji će ući u tekuće izdanje časopisa.
@@ -383,14 +489,10 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
 \end{itemize}
 
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=\linewidth]{UpravljanjeIzdanjemCasopisa.PNG}
-    \caption{Upravljanje izdanjem časopisa}
-    \label{fig:my_label}
-\end{figure}
+\newpage
 
 \subsubsection{Pregled radne verzije izdanja časopisa}
+\label{subsubsection:pregledradneverzije}
 \begin{itemize}
     \item Akter: Glavni urednik
     \item Kratak opis: Glavni urednik vrši pregled radne verzije tekućeg izdanja časopisa.
@@ -409,7 +511,15 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                 \item Glavni urednik se vraća na 1. korak osnovnog toka ili se obraća administratoru.
             \end{enumerate}
         \end{enumerate}
+        \begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=\linewidth]{inpress.png}
+    \caption{Pregled radne verzije izdanja časopisa \cite{vesnik}}
+    \label{fig:inpress}
+\end{figure}
 \end{itemize}
+
+\newpage
 
 \subsubsection{Pregled prethodnih izdanja časopisa}
 \begin{itemize}
@@ -439,15 +549,19 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
 \end{itemize}
 
+\newpage
+
 \subsection{Upravljanje časopisom}
+\label{subsection:upravljanjecasopisom}
 
 \subsubsection{Promena podataka časopisa}
+\label{subsection:promenapodatakacasopisasec}
 
 \begin{figure}[hbt!]
     \centering
     \includegraphics[width=\linewidth]{PromenaPodatakaCasopisa.png}
-    \caption{Promena podataka časopisa}
-    \label{fig:my_label}
+    \caption{Promena podataka časopisa \cite{alex} \cite{vparadigm}}
+    \label{fig:promenapodcas}
 \end{figure}
 
 \begin{itemize}
@@ -489,33 +603,35 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                     \item Ozbiljna greška sistema. Administrator traži grešku i pokušava da je otkloni.
                 \end{enumerate}
         \end{enumerate}
-\end{itemize}
-
-\begin{figure}[hbt!]
+        \item Dodatak: slika \ref{fig:promenapodatkacasopisa}
+        \begin{figure}[hbt!]
     \centering
     \includegraphics[width=\linewidth]{PromenaPodatakaCasopisa.PNG}
-    \caption{Promena podataka časopisa}
-    \label{fig:my_label}
+    \caption{Promena podataka časopisa \cite{smalkov} \cite{vparadigm}}
+    \label{fig:promenapodatkacasopisa}
 \end{figure}
+\end{itemize} 
+\newpage
 
 \subsection{Upravljanje radovima}
+\label{subsection:upravljanjeradovimasec}
 
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=1\linewidth]{UpravljanjeRadovima.png}
-    \caption{Upravljanje radovima}
-    \label{fig:my_label}
-\end{figure}
-
-
+Kao što je prikazano na slikama \ref{fig:nivo1} i \ref{fig:upravljanjeradovima}, proces se sastoji od: \textit{prijavljivanje radova}, \textit{Ažuiriranje radova}, \textit{Povlačenje rada}, \textit{Odlučivanje o statusu rada}, \textit{Komentarisanje rada}
 \begin{figure}[hbt!]
     \center
-    \includegraphics[width=1\linewidth]{UpravljanjeRadovima.jpg}
-    \caption{Dijagram toka podataka nivoa 1 Upravljanje radovima}
-    \label{fig:my_label}
+    \includegraphics[width=1.05\linewidth]{UpravljanjeRadovima1.png}
+    \caption{Dijagram toka podataka nivoa 1; Upravljanje radovima \cite{smalkov} \cite{vparadigm}}
+    \label{fig:nivo1}
+\end{figure}
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=1.05\linewidth]{UpravljanjeRadovima.png}
+    \caption{Upravljanje radovima \cite{alex} \cite{vparadigm}}
+    \label{fig:upravljanjeradovima}
 \end{figure}
 
 \subsubsection{Izlistavanje radova}
+\label{subsubsection:izlistavanjeradova}
 \begin{itemize}
     \item Akter: Korisnik
     \item Kratak opis: Korisnik izlistava radove po zadatom uslovu u filteru.
@@ -536,6 +652,8 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
             \end{enumerate}
         \end{enumerate}
 \end{itemize}
+
+\newpage
 
 \begin{comment}
 \subsubsection{Recenzent izlistava radove koje recenzira}
@@ -581,9 +699,8 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
 \end{itemize}
 \end{comment}
 
-
-
 \subsubsection{Prijavlivanje rada}
+\label{subsubsection:prijavljivanjerada}
 
 \begin{itemize}
     \item Akter: Autor
@@ -605,9 +722,19 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                 \item Autor se vraća na 1. korak osnovnog toka ili odustaje.
             \end{enumerate}
         \end{enumerate}
+    \item Dodatak: slika \ref{fig:prijavljivanje}
+    \begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=1\linewidth]{ArticleRegister.png}
+    \caption{Prijavljivanje rada}
+    \label{fig:prijavljivanje}
+\end{figure}
 \end{itemize}
 
+\newpage
+
 \subsubsection{Ažuriranje rada}
+\label{subsubsection:azuriranje}
 \begin{itemize}
     \item Akter: Autor
     \item Kratak opis: Autor, nakon dorade, prijavljuje novu verziju rada
@@ -630,7 +757,10 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
 \end{itemize}
 
+\newpage
+
 \subsubsection{Povlačenje rada}
+\label{subsubsection:povlacenjerada}
 \begin{itemize}
     \item Akter: Autor
     \item Kratak opis: Autor povlači rad iz časopisa
@@ -646,7 +776,10 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
     \item Alternativni tok događaja: nema
 \end{itemize}
 
+\newpage
+
 \subsubsection{Odlučivanje o prihvatanju/odbijanju rada}
+\label{subsubsection:prihvatanjeodbijanje}
 \begin{itemize}
     \item Akter: Glavni urednik, Urednik
     \item Kratak opis: (Glavni) Urednik menja prihvata ili odbija rad. Glavni urednik može promeniti ovaj status već prihvaćenom/odbijenom radu.
@@ -675,7 +808,10 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
 \end{itemize}
 
-\subsubsection{Ostavljanje komentara na rada}
+\newpage
+
+\subsubsection{Ostavljanje komentara na rad}
+\label{subsubsection:ostavljanjekomentara}
 \begin{itemize}
     \item Akter: Glavni urednik i urednik
     \item Kratak opis: Glavni urednik i urednik ostavljaju komentar na rad
@@ -687,7 +823,7 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
            \item (Glavni) urednik piše tekst komentara.
            \item (Glavni) urednik šalje zahtev za čuvanjem komentara.
            \item Sistem je sačuvao komentar.
-           \item Sistem šalje poruku sa odgovarajućim šablonom autoru koji je prijavio rad.
+           \item Sistem šalje poruku sa odgovarajućim šablonom autoru koji je prijavio rad. 
            \item Sistem obaveštava (glavnog) urednika o ostavljanju komentara na rad.
         \end{enumerate}
     \item Alternativni tok događaja:
@@ -705,22 +841,35 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                 \item Tok se nastavlja na koraku 6 glavnog toka.
             \end{enumerate}
         \end{enumerate}
+        \item Dodatak: slika \ref{fig:leavingcomment}
+        \begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{LeavingComment.png}
+    \caption{Ostavljanje komentara na rad}
+    \label{fig:leavingcomment}
+\end{figure}
 \end{itemize}
 
-\subsection{Recenziranje}
+\vspace{1.5cm}
 
-\begin{figure}[hbt!]
+\newpage
+
+\subsection{Recenziranje}
+\label{subsection:recenziranjesec}
+
+\begin{figure}[ht!]
     \centering
-    \includegraphics[width=1.3\linewidth]{Recenziranje.PNG}
-    \caption{Recenziranje}
-    \label{fig:my_label}
+    \includegraphics[width=\linewidth]{RecenziranjeUseCase.PNG}
+    \caption{Dijagram slučaja upotrebe Recenziranje \cite{alex} \cite{vparadigm}}
+    \label{fig:recenziranjeusecase}
 \end{figure}
 
 \subsubsection{Odabir recenzenta}
+\label{subsubsection:odabirrecenzenta}
 \begin{itemize}
     \item Akter: Urednik
     \item Kratak opis: Urednik bira recenzente za prijavljeni rad
-    \item Preduslovi: Radu nisu dodeljeni recenzenti
+    \item Preduslovi: Nema
     \item Postuslovi: Nema
     \item Osnovni tok događaja:
         \begin{enumerate}
@@ -729,7 +878,8 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
            \item Urednik bira recenzenta.
            \item Urednik šalje recenzentu ponudu za recenziranje rada.
            \item Sistem šalje mejl recenzentu sa ponudom za recenziranje.
-           \item Sistem obaveštava urednika o uspešno poslatom mejlu.
+           \item Sistem obaveštava urednika o uspešno poslatom mejlu. 
+           \item Sistem u bazi podataka dodeljuje radu odabranog recenzenta
         \end{enumerate}
     \item Alternativni tok događaja:
         \begin{enumerate}
@@ -749,16 +899,20 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                 \item Urednik se vraća na 4. korak osnovnog toka ili se obraća administratoru.
             \end{enumerate}
         \end{enumerate}
+        \item Dodatak: slika \ref{fig:recenziranje}
+        \afterpage{\clearpage}
+        \begin{sidewaysfigure}[ht!]
+    \centering
+    \includegraphics[width=1\linewidth]{Recenziranje.PNG}
+    \caption{Recenziranje \cite{smalkov} \cite{vparadigm}}
+    \label{fig:recenziranje}
+\end{sidewaysfigure}
 \end{itemize}
 
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=\linewidth]{RecenziranjeUseCase.PNG}
-    \caption{Dijagram slučaja upotrebe Recenziranje}
-    \label{fig:my_label}
-\end{figure}
+\newpage
 
 \subsubsection{Donošenje odluke o prihvatanju/odbijanju recenzentske uloge}
+\label{subsubsection:prihvatanjeodbijanjeuloge}
 \begin{itemize}
     \item Akter: Recenzent
     \item Kratak opis: Recenzent donosi odluku da li prihvata ili odbija recenzentsku ulogu za prijavljeni rad.
@@ -798,7 +952,10 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
 \end{itemize}
 
+\newpage
+
 \subsubsection{Ostavljanje recenzije na rad}
+\label{subsubsection:ostavljanjerecenzijesec}
 \begin{itemize}
     \item Akter: Recenzent
     \item Kratak opis: Recenzent ostavlja svoju recenziju na rad u sistemu.
@@ -820,9 +977,19 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                 \item Recenzent se vraća na 2. korak osnovnog toka ili se obraća administratoru.
             \end{enumerate}
         \end{enumerate}
+        \item Dodatak: slika \ref{fig:ostavljanjerecenzije}
+        \begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{LeavingRecension.png}
+    \caption{Ostavljanje recenzije}
+    \label{fig:ostavljanjerecenzije}
+\end{figure}
 \end{itemize}
 
+\newpage
+
 \subsubsection{Pregled loga aktivnosti}
+\label{subsubsection:pregledloga}
 \begin{itemize}
     \item Akter: Recenzent
     \item Kratak opis: Recenzent pregleda spisak svih radova koje je prihvatio ili odbio da recenzira
@@ -835,7 +1002,16 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
         \end{enumerate}
 \end{itemize}
 
+\newpage
+
 \subsection{Komunikacija među korisnicima}
+\label{subsection:komunikacijasec}
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.5\linewidth]{KomunikacijaIzmedjuKorisnika.PNG}
+    \caption{Komunikacija među korisnicima \cite{alex} \cite{vparadigm}}
+    \label{fig:komunikacija}
+\end{figure}
 
 \subsubsection{Zahtev za slanje poruke (emaila)}
 \begin{itemize}
@@ -868,45 +1044,164 @@ Sadržaj šablona i formulara biće priložen nezavisno od ovog dokumenta u odel
                 \item Korisnik se vraća na 5. korak osnovnog toka.
             \end{enumerate}
         \end{enumerate}
+    \item Dodatak: spisak šablona i njihov izgled na slici \ref{fig:template} i opis toka slanja na slici \ref{fig:tok}
+    \begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\linewidth]{SendingTemplate.png}
+    \caption{Izgled šablona}
+    \label{fig:template}
+    \end{figure}
+    \begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.05\linewidth]{KomunikacijaMedjuKorisnicima.PNG}
+    \caption{Tok slanja \cite{alex} \cite{vparadigm}}
+    \label{fig:tok}
+    \end{figure}
+    \begin{itemize}
+        \item Glavni urednik urednicima: obaveštava urednika o novopristriglom radu i prosleđuje mu rad
+        \item Glavni urednik administratoru: obaveštava administratora da želi da ukloni korisnika iz sistema
+        \item Urednik autoru: obaveštava autora o tome da li je rad prihvaćen ili odbijen 
+        \item Recenzent uredniku: obaveštava ga da ne želi da prihvati recenziju na predloženi rad
+        \item Sistem autoru: obaveštava ga kada (glavni) urednik ostavi komentar na rad, ili kada recenzent ostavi recenziju
+    \end{itemize}
 \end{itemize}
 
+\newpage
+
+\section{Model baze podataka}
+\label{section:modelbaze}
+
+Dijagrami koji opisuju bazu podataka nalaze se na slikama \ref{fig:er} i \ref{fig:eer}, pri čemu dole navedeni tekst opisuje drugu.
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.8\linewidth]{KomunikacijaIzmedjuKorisnika.PNG}
-    \caption{Zahtev za slanjem poruke (emaila)}
-    \label{fig:my_label}
+    \includegraphics[width=1.15\linewidth]{ERDiagram.png}
+    \caption{ER dijagram \cite{erdplus}}
+    \label{fig:er}
 \end{figure}
-
-\subsection{Model baze podataka}
-
-Za Korisnika se prati id, ime, prezime, email, sifra, telefon, adresa, postanski broj, vreme poslednjeg logina. Korisnik Upravlja svojim sopstvenim podešavanjima - može upravljati samo svojim podacima, ali i ne mora. Način komunikacije između dva korisnika se ostvaruje tako što korisnik drugom korisniku Šalje šablon za koji se prati id i tekst šablona - korisnik može slati više šablona, ali ne mora slati ni jedan. Šablon može biti poslat od strane više korisnika, ali ne mora ni jedan.
-
-Korisnik Ima ulogu u sistemu, i za tu Ulogu se prati id i naziv. Mora imati jednu ulogu, ali može i više, a ulogu mora imati bar jedan korisnik, ali može i više. Uloge mogu biti: glavni urednik, urednik, autor, recenzent, administrator. Prilikom priljavljivanja na sistem svi korisnici su autori (sem administratora), a glavni urednik (i samo on) im kasnije Dodeljuje uloge, a on sam može dodeliti više uloga. Uloga Obezbeđuje dodatne Privilegije korisnicima sistema, za koje se prati id i naziv. Uloga obezbeđuje barem jednu, a može i više privilegija, privilegije moraju biti dodeljene barem jednoj ulazi, ali mogu i više.
-
-Administrator može da Menja podatke- ostalih korisnika, kao i da Menja podešavanja samog časopisa. Podešavanja samo jednog časopisa menja samo administrator, koji jedini može menjati podatke ostalih korisnika i to više njih, ali ni ne mora.
-
-Autor Prijavljuje Rad, za koji se prati id, naslov, link ka pdf verziji, status, da li je objavljen. On može prijaviti više radova, a ne mora ni jedan, ali samo jedan autor može prijaviti rad. Samo onaj ko je prijavio rad može i da ga povuče, a onaj ko je prijavio radove može da povuče i više svojih radova, ali ne mora ni jedan.
-
-Rad može imati jednu ili više Verzija, a sama verzija može biti verzija samo jednog rada.
-
-Recenzent Objavljuje Recenziju za koju se prati id, komentar, rad na koji je ostavljena, koji recenzent je objavio i za tu objavu se čuvaju vreme i datum. Recenzent može objaviti više recenzija, ali ne mora ni jednu, a recenziju mora objaviti barem jedan recenzent, ali može i više.
-
-(Glavni) urednik može a ne mora da Ostavlja komentar na rad, i to na njih više, a rad može komentarisati i njih više, ali ne mora niko.
-
-Glavni urednik i samo on može da Uređuje Izdanje časopisa za koje se prati issn broj, naslov, napomena, minimalan i maksimalan broj radova, i to barem jedno, a može i njih više.
-
-\begin{figure}[hbt!]
+\afterpage{\clearpage}
+\begin{sidewaysfigure}[ht!]
     \centering
-    \includegraphics[width=\linewidth]{ERDiagram.png}
-    \caption{ER dijagram}
-    \label{fig:my_label}
-\end{figure}
+    \includegraphics[width=1.15\linewidth]{EER.png}
+    \caption{EER dijagram \cite{wbench}}
+    \label{fig:eer}
+\end{sidewaysfigure}
 
-\begin{figure}[hbt!]
+\begin{itemize}
+    \item Nezavisni entiteti
+    \begin{itemize}
+        \item Korisnički nalog
+        \item Uloga
+        \item Privilegija
+        \item Šablon
+        \item Rad
+        \item Recenzija
+        \item Časopis
+        \item Izdanje časopisa
+    \end{itemize}
+    \item Agregirani entiteti
+    \begin{itemize}
+        \item Ima
+        \item Piše
+        \item Obezbeđuje
+        \item Prijavljuje
+        \item Ostavlja komentar
+        \item Poslata poruka
+    \end{itemize}
+    \item Rekurzivni odnos
+    \begin{itemize}
+        \item Promena sopstvenih podataka
+    \end{itemize}
+    \item Slab entitet ili odnos specijalizacija/generalizacija
+    \begin{itemize}
+        \item Zavisni entitet: Verzija
+    \end{itemize}
+    \item Trigeri kojima se menja stanje baze
+    \begin{itemize}
+        \item Triger1 - Prilikom pravljenja nove verzije rada, link rada se postavlja na link verzije
+        \item Triger2 - Prilikom pravljenja nove verzije rada se automatski postavljaju datum i vreme na trenutan datum i vreme
+        \item Triger3 - Prilikom prijave rada se automatski pravi i njegova prva verzija
+        \item Prilikom prijave novog korisnika automatski mu se dodeljuje i status autora
+    \end{itemize}
+\end{itemize}
+
+\newpage
+
+\section{Arhitektura}
+\label{section:arhitekturasec}
+    
+    Karakteristike arhitekture informacionog sistema:
+    \begin{itemize}
+        \item Tip aplikacije: Web aplikacija. Ovakav odabir sistemu obezbeđuje \textit{dostupnost}, \textit{ažurnost} i \textit{jednostavnost}.
+        \item Strategije isporučivanja: jedan serverski i više klijentskih računara
+        \item Odgovarajuće tehnologije: HTML, CSS, SQL, JavaScript(jQuery, Angular.js/React.js),\\
+        PHP(Simphony)/Java(Spring MVC)
+    \end{itemize}
+    
+    \subsection{Tip arhitekture:}
+    \label{sbsection:tip}
+    
+     \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=\linewidth]{EER.png}
-    \caption{EER dijagram}
-    \label{fig:my_label}
+    \includegraphics[scale=0.5]{Architecture.png}
+    \caption{Troslojna arhitektura sa podeljenim logičkim slojem \cite{draw}}
+    \label{fig:arhitektura}
 \end{figure}
+    
+    Odabrana je \textbf{troslojna arhitektura} (slika \ref{fig:arhitektura}) zato što je:
+    \begin{itemize}
+        \item prilagodljiva brzim promenama u korisničkom i implementacionom okruženju
+        \item jednostavna i intuitivna za implementaciju
+        \item omogućava transparentno povezivanje korisnika sa izvorima podataka koji su im potrebni
+    \end{itemize}
+    
+    \textbf{Prezentacioni sloj:}
+    \begin{itemize}
+        \item Forma za prijavu i registraciju
+        \item Provera validnosti unošenja: Prilikom popunjavanja formi proverava se validnost podataka - u polje za email je unet ispravan email, sva obavezna polja su popunjena...
+        \item Korisničke strane za različite grupe korisnika: različitim grupama korisnika se prikazuju različite korisničke strane
+        \item Prikaz radova koji su trenutno u štampi
+    \end{itemize}
+    
+    \textbf{Logički sloj:}
+    \begin{itemize}
+        \item Dohvatanje i obrada zahteva i podataka: Nakon dohvatanja zahteva i podataka iz formi, vrši se njihova obrada tako da budu spremni da prođu autorizaciju, autentifikaciju, ažuriraje podataka ili slanje zahteva
+        \item Autorizacija
+        \item Autentifikacija
+        \item Ažuriranje podataka: obrađeni podaci se upisuju u bazu podataka (insert i update upiti)
+        \item Slanje zahteva: zahtevi se šalju ka bazi podataka i od nje zahtevaju podaci (select upiti)
+        \item Dohvatanje i obrada podataka iz baze: dohvataju se i obrađuju podaci koji su zahtevani select upitima
+        \item Prosleđivanje prezentacionom sloju: obrađeni podaci se pakuju u oblik pogodan za prezentacioni sloj i time njemu prosleđuju
+    \end{itemize}
+    
+    \textbf{Sloj podataka:} Predstavlja bazu podataka
+    
+\newpage
 
+\addcontentsline{toc}{section}{Literatura}
+\appendix
+\bibliography{literatura} 
+\bibliographystyle{plain}
+    
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
